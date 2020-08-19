@@ -7,9 +7,26 @@
     margin-right: 5%;
 }
 
+.animated-emoji {
+    height: 16px;
+    width: 16px;
+}
+
 .emoji-text {
     height: 100px;
     width: 100px;
+}
+
+.emoji-stream {
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 5%;
+}
+
+.emoji-live-stream {
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 5%;
 }
 
 .flex-container {

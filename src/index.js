@@ -5,7 +5,16 @@ import 'react-h5-audio-player/lib/styles.css';
 import './index.css';
 import logo from './logo.png';
 import joji from './joji.mp3'
+import anime from 'animejs/lib/anime.es.js';
 
+
+var emoji_array = [
+    "😢",
+    "😪",
+    "😞",
+    "💧",
+    "😕"
+]
 
 function Pizza() {
     return <img src={logo} alt="Logo" className="pizza"/>
@@ -37,6 +46,38 @@ const Emoji = props => (
     </span>
 );
 
+function PickRandomEmoji() {
+    var ind = Math.floor(Math.random() * emoji_array.length);
+    return(
+        emoji_array[ind]
+    );
+}
+
+function EmojiStream() {
+    const animationRef = React.useRef(null);
+    React.useEffect(() => {
+    animationRef.current = anime({
+      targets: ".animated-emoji",
+      translateX: 500,
+      duration: 2000,
+      loop: true,
+      direction: "alternate",
+      easing: "linear"
+    });
+  }, []);
+  return (
+      <div>
+        <h1 className="animated-emoji"><Emoji symbol={PickRandomEmoji()}/></h1>
+        <h1 className="animated-emoji"><Emoji symbol={PickRandomEmoji()}/></h1>
+        <h1 className="animated-emoji"><Emoji symbol={PickRandomEmoji()}/></h1>
+      </div>
+  );
+}
+
+const EmojiStreamHelper = () => (
+    <EmojiStream />
+);
+
 class Player extends React.Component {  // temp to just show components
     render() {
         return (
@@ -47,7 +88,7 @@ class Player extends React.Component {  // temp to just show components
 
                 <div className="flex-container">
                     <div className="emoji">
-                        <h1 className="emoji-text"><Emoji symbol="🐑"/></h1>
+                        <h1 className="emoji-text"><Emoji symbol="😢"/></h1>
                     </div>
 
                     <div className="progress-bar-div">
@@ -55,7 +96,11 @@ class Player extends React.Component {  // temp to just show components
                             style={{width:'500px' }}
                             src={joji} 
                         />
+                        <div className="emoji-stream">
+                            <EmojiStreamHelper />
+                        </div>
                     </div>
+
                 </div>
 
             </div>
