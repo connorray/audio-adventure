@@ -39,26 +39,6 @@ function PickRandomEmoji() {
     );
 }
 
-function EmojiStream() {
-    const animationRef = React.useRef(null);
-    React.useEffect(() => {
-        animationRef.current = anime({
-        targets: ".animated-emoji",
-        translateX: 500,
-        duration: 2000,
-        direction: "normal",
-        easing: "linear"
-        });
-    }, []);
-  return (
-      <div>
-        <h1 className="animated-emoji"><Emoji symbol={PickRandomEmoji()}/></h1>
-        <h1 className="animated-emoji"><Emoji symbol={PickRandomEmoji()}/></h1>
-        <h1 className="animated-emoji"><Emoji symbol={PickRandomEmoji()}/></h1>
-      </div>
-  );
-}
-
 class EmojiController extends React.Component {
     constructor(props) {
         super(props);
@@ -73,32 +53,35 @@ class EmojiController extends React.Component {
         });
     }
 
-    renderEmojis() {
-        return(
-            // emoji object
-            <EmojiStream />
-        );
+    handleOnPause() {
+        this.setState({
+            start: false,
+        });
     }
 
     render() {
-        const animationRef = React.useRef(null);
-        React.useEffect(() => {
-            animationRef.current = anime({
-            targets: ".animated-emoji",
-            translateX: 500,
-            duration: 2000,
-            direction: "normal",
-            easing: "linear"
-            });
-        }, []);
-        if (this.start) {
+        if (this.start === true) {
+            const animationRef = React.useRef(null);
+            React.useEffect(() => {
+                animationRef.current = anime({
+                targets: ".animated-emoji",
+                translateX: 500,
+                duration: 2000,
+                direction: "normal",
+                easing: "linear"
+                });
+            }, []);
             return(
                 <div>
-                    {this.renderEmojis}
+                    <h1 className="animated-emoji"><Emoji symbol={PickRandomEmoji()}/></h1>
+                    <h1 className="animated-emoji"><Emoji symbol={PickRandomEmoji()}/></h1>
+                    <h1 className="animated-emoji"><Emoji symbol={PickRandomEmoji()}/></h1>
                 </div>
             );
         }else {
-            console.log("stopped");
+            return(
+                <div>:)</div>
+            )
         }
     }
 }
@@ -119,10 +102,14 @@ class Player extends React.Component {  // temp to just show components
                     <div className="progress-bar-div">
                         <AudioPlayer 
                             style={{width:'500px' }}
-                            src={joji} 
+                            src={joji}
+                            onPlay={e => EmojiController.handleOnPlay}
+                            onPause={e => EmojiController.handleOnPause}
                         />
                         <div className="emoji-stream">
-                            <EmojiStream />
+                            <EmojiController 
+                                start={false}
+                            />
                         </div>
                     </div>
 
