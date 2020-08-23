@@ -8,6 +8,7 @@ import joji from './joji.mp3'
 import anime from 'animejs/lib/anime.es.js';
 
 
+var playClicked = false;
 var emoji_array = [
     "😢",
     "😪",
@@ -19,21 +20,6 @@ var emoji_array = [
 function Pizza() {
     return <img src={logo} alt="Logo" className="pizza"/>
 }
-
-function EmojiLabel() {
-    return <label>
-        Emoji filler
-    </label>
-}
-
-const AudioPlayerBrains = () => (
-    <AudioPlayer
-      autoPlay
-      src="http://example.com/audio.mp3"
-      onPlay={e => console.log("onPlay")}
-      // other props here
-    />
-);
 
 const Emoji = props => (
     <span
@@ -56,15 +42,14 @@ function PickRandomEmoji() {
 function EmojiStream() {
     const animationRef = React.useRef(null);
     React.useEffect(() => {
-    animationRef.current = anime({
-      targets: ".animated-emoji",
-      translateX: 500,
-      duration: 2000,
-      loop: true,
-      direction: "alternate",
-      easing: "linear"
-    });
-  }, []);
+        animationRef.current = anime({
+        targets: ".animated-emoji",
+        translateX: 500,
+        duration: 2000,
+        direction: "normal",
+        easing: "linear"
+        });
+    }, []);
   return (
       <div>
         <h1 className="animated-emoji"><Emoji symbol={PickRandomEmoji()}/></h1>
@@ -74,9 +59,49 @@ function EmojiStream() {
   );
 }
 
-const EmojiStreamHelper = () => (
-    <EmojiStream />
-);
+class EmojiController extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            start: false,
+        };
+    }
+
+    handleOnPlay() {
+        this.setState({
+            start: true,
+        });
+    }
+
+    renderEmojis() {
+        return(
+            // emoji object
+            <EmojiStream />
+        );
+    }
+
+    render() {
+        const animationRef = React.useRef(null);
+        React.useEffect(() => {
+            animationRef.current = anime({
+            targets: ".animated-emoji",
+            translateX: 500,
+            duration: 2000,
+            direction: "normal",
+            easing: "linear"
+            });
+        }, []);
+        if (this.start) {
+            return(
+                <div>
+                    {this.renderEmojis}
+                </div>
+            );
+        }else {
+            console.log("stopped");
+        }
+    }
+}
 
 class Player extends React.Component {  // temp to just show components
     render() {
@@ -97,7 +122,7 @@ class Player extends React.Component {  // temp to just show components
                             src={joji} 
                         />
                         <div className="emoji-stream">
-                            <EmojiStreamHelper />
+                            <EmojiStream />
                         </div>
                     </div>
 
