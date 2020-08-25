@@ -6,6 +6,7 @@ import './index.css';
 import logo from './logo.png';
 import joji from './joji.mp3'
 import anime from 'animejs/lib/anime.es.js';
+import { render } from '@testing-library/react';
 
 
 var playClicked = false;
@@ -19,6 +20,26 @@ var emoji_array = [
 
 function Pizza() {
     return <img src={logo} alt="Logo" className="pizza"/>
+}
+
+function LiveEmoji() {
+    const animationRef = React.useRef(null);
+            React.useEffect(() => {
+                animationRef.current = anime({
+                targets: ".animated-emoji",
+                translateX: 500,
+                duration: 2000,
+                direction: "normal",
+                easing: "linear"
+                });
+            }, []);
+        return(
+            <div>
+                <h1 className="animated-emoji"><Emoji symbol={PickRandomEmoji()}/></h1>
+                <h1 className="animated-emoji"><Emoji symbol={PickRandomEmoji()}/></h1>
+                <h1 className="animated-emoji"><Emoji symbol={PickRandomEmoji()}/></h1>
+            </div>
+        );
 }
 
 const Emoji = props => (
@@ -48,35 +69,17 @@ class EmojiController extends React.Component {
     }
 
     handleOnPlay() {
-        this.setState({
-            start: true,
-        });
+        this.state.start = true;
     }
 
     handleOnPause() {
-        this.setState({
-            start: false,
-        });
+        this.state.start = false;
     }
 
     render() {
-        if (this.start === true) {
-            const animationRef = React.useRef(null);
-            React.useEffect(() => {
-                animationRef.current = anime({
-                targets: ".animated-emoji",
-                translateX: 500,
-                duration: 2000,
-                direction: "normal",
-                easing: "linear"
-                });
-            }, []);
+        if (this.state.start === true) {
             return(
-                <div>
-                    <h1 className="animated-emoji"><Emoji symbol={PickRandomEmoji()}/></h1>
-                    <h1 className="animated-emoji"><Emoji symbol={PickRandomEmoji()}/></h1>
-                    <h1 className="animated-emoji"><Emoji symbol={PickRandomEmoji()}/></h1>
-                </div>
+                <LiveEmoji />
             );
         }else {
             return(
@@ -87,6 +90,25 @@ class EmojiController extends React.Component {
 }
 
 class Player extends React.Component {  // temp to just show components
+    constructor(props) {
+        super(props);
+        this.emoji_controller = {
+            controller: <EmojiController start={false}/>,
+        };
+    }
+
+    handleOnPlay() {
+        this.setState({
+            controller: <EmojiController start={true} />
+        });
+    }
+
+    handleOnPause() {
+        this.setState({
+            controller: <EmojiController start={false} />
+        });
+    }
+
     render() {
         return (
             <div>
@@ -103,12 +125,16 @@ class Player extends React.Component {  // temp to just show components
                         <AudioPlayer 
                             style={{width:'500px' }}
                             src={joji}
-                            onPlay={e => EmojiController.handleOnPlay}
-                            onPause={e => EmojiController.handleOnPause}
+                            onPlay={e => this.emoji_controller.controller.handleOnPlay}
+                            onPause={e => this.emoji_controller.controller.handleOnPause}
                         />
                         <div className="emoji-stream">
-                            <EmojiController 
+                            {/* <EmojiController 
                                 start={false}
+                            /> */}
+                            <EmojiController
+                                start={false}
+                                handleOnPlay={this.handleOnPlay}
                             />
                         </div>
                     </div>
